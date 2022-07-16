@@ -1,0 +1,887 @@
+openapi: 3.0.1
+info:
+  title: MealViewer API
+  description:
+    Mealviewer provides school menu and nutrition information for participating
+    schools. This is unofficial documentation exclusively for JSON, XML responses exist but the schema is different.
+  version: 1.0.0
+servers:
+  - url: https://api.mealviewer.com/api/v4
+tags:
+  - name: school
+    description: Information about school menus
+  - name: location
+    description: Information about available locations
+paths:
+  /school/{schoolName}/{startDate}/{endDate}:
+    get:
+      tags:
+        - school
+      summary: Find menu data for school in date range
+      description: Returns a menu(s) for a single school
+      operationId: getMenuBySchool
+      parameters:
+        - name: schoolName
+          in: path
+          description: Name of the school for which to return menu data
+          example: DunbarHS
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: path
+          description: Starting date (inclusive) of range for which to retrieve menu data
+          example: 01-01-2022
+          required: true
+          schema:
+            type: string
+            format: mm-dd-yyyy
+        - name: endDate
+          in: path
+          description: Ending date (inclusive) of range for which to retrieve menu data
+          example: 01-01-2022
+          required: true
+          schema:
+            type: string
+            format: mm-dd-yyyy
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuResponse"
+        404:
+          description: Malformed query
+          content: {}
+  /physicalLocation/search/{location}:
+    get:
+      tags:
+        - location
+      summary: Return information about schools at a given location
+      description: Returns a list of schools at the provided location
+      operationId: getLocations
+      parameters:
+        - name: location
+          in: path
+          description: Name of the location for which to retrieve participating schools
+          example: New York
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationResponse"
+        404:
+          description: Malformed query
+          content: {}
+        500:
+          description: No parameters provided
+          content: {}
+components:
+  schemas:
+    Allergen:
+      description: An array of allergen objects makes up the allergy information for a given food item.
+      type: object
+      properties:
+        id:
+          type: integer
+        cid:
+          type: integer
+        codeName:
+          type: string
+        itemId:
+          type: integer
+        name:
+          example: Egg
+          type: string
+        physicalLocationId:
+          type: integer
+        value:
+          example: "True"
+          type: string
+        svg:
+          type: string
+      required:
+        - id
+        - cid
+        - codeName
+        - itemId
+        - name
+        - physicalLocationId
+        - value
+        - svg
+    Block:
+      description: Represents a block during which a given food item is served
+      type: object
+      properties:
+        id:
+          type: integer
+        object:
+          type: string
+          nullable: true
+        blockName:
+          example: Lunch
+          type: string
+        scheduledDate:
+          example: "0001-01-01T00:00:00"
+          type: string
+        blackedOut:
+          type: boolean
+        noScheduleText:
+          type: boolean
+          nullable: true
+      required:
+        - id
+        - object
+        - blockName
+        - scheduledDate
+        - blackedOut
+        - noScheduleText
+    CafeteriaLineList:
+      description: List of meals for a specific meal block (e.g breakfast)
+      type: object
+      properties:
+        object:
+          type: string
+        url:
+          type: string
+        hasMore:
+          type: boolean
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              id:
+                type: integer
+              object:
+                type: string
+              foodItemList:
+                type: object
+                properties:
+                  object:
+                    type: string
+                  url:
+                    type: string
+                  hasMore:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FoodItem"
+            required:
+              - name
+              - id
+              - object
+              - foodItemList
+      required:
+        - object
+        - url
+        - hasMore
+        - data
+    DailyMenu:
+      description: Items available every day on a menu (e.g. milk, condiments)
+      type: object
+      properties:
+        name:
+          type: string
+        blocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Block"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FoodItem"
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+      required:
+        - name
+        - blocks
+        - items
+        - menuId
+        - orderId
+    Feature:
+      type: object
+      properties:
+        featureId:
+          type: integer
+        cid:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        available:
+          type: boolean
+        enabled:
+          type: boolean
+        districtSummerFeedingSettings:
+          type: object
+          nullable: true
+      required:
+        - featureId
+        - cid
+        - id
+        - name
+        - available
+        - enabled
+        - districtSummerFeedingSettings
+    FoodItem:
+      description: Represents a single food item from the menu and accompanying nutritional/allergen information
+      type: object
+      properties:
+        id:
+          type: integer
+        servingSizeId:
+          type: integer
+        serving_Size_Id:
+          type: integer
+        portionQuantity:
+          example: "1.0"
+          type: number
+        portionSize:
+          example: "1.0"
+          type: number
+        portionUnit:
+          type: string
+        calculatedPortionSize:
+          type: number
+        object:
+          type: string
+        menu_Name:
+          type: string
+        menu_Id:
+          type: integer
+        item_Order_Id:
+          type: integer
+        block_Name:
+          type: string
+        block_Id:
+          type: integer
+        block_Type:
+          type: string
+        menu_Block_Date:
+          type: string
+        location_Id:
+          type: integer
+        imageFileName:
+          type: string
+          nullable: true
+        location_Name:
+          type: string
+          nullable: true
+        physical_Location_Name:
+          type: string
+        item_Id:
+          type: integer
+        item_Type:
+          example: MISCELLANEOUS
+          type: string
+        item_RatingLevel:
+          type: integer
+        item_Type_Order_Id:
+          type: integer
+        item_Name:
+          example: "1% Milk"
+          type: string
+        item_Name_Line_2:
+          type: string
+          nullable: true
+        block_Location_Status:
+          type: string
+        block_Order:
+          type: integer
+        location_Order:
+          type: integer
+        mvS_Visible:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        ingredients:
+          nullable: true
+        nutritionals:
+          description: Complete nutritional information data
+          type: array
+          items:
+            $ref: "#/components/schemas/Nutritional"
+        allergens:
+          type: array
+          items: {}
+        badges:
+          type: array
+          items: {}
+        calories:
+          type: integer
+          nullable: true
+        fat:
+          type: integer
+          nullable: true
+        carbs:
+          type: integer
+          nullable: true
+        whole_Grain:
+          type: integer
+          nullable: true
+        mG_Cholst:
+          type: integer
+        mG_Sodm:
+          type: integer
+        g_Fiber:
+          type: integer
+        mG_Iron:
+          type: integer
+        mG_Calcm:
+          type: integer
+        iu_Vit_A:
+          type: integer
+        mG_Vit_C:
+          type: integer
+        g_Protn:
+          type: integer
+        g_Carb:
+          type: integer
+        g_T_Fat:
+          type: integer
+        g_S_Fat:
+          type: integer
+        g_Tr_Fat:
+          type: integer
+        meat:
+          type: boolean
+        grain:
+          type: boolean
+        fruit:
+          type: boolean
+        contains_Pork:
+          type: boolean
+        vegetarian:
+          type: boolean
+        local:
+          type: boolean
+        organic:
+          type: boolean
+        egg:
+          type: boolean
+        milk:
+          type: boolean
+        soy:
+          type: boolean
+        wheat:
+          type: boolean
+        shellfish:
+          type: boolean
+        peanut:
+          type: boolean
+        tree_Nuts:
+          type: boolean
+        fish:
+          type: boolean
+        price:
+          type: number
+      required:
+        - id
+        - servingSizeId
+        - serving_Size_Id
+        - portionQuantity
+        - portionSize
+        - portionUnit
+        - calculatedPortionSize
+        - object
+        - menu_Name
+        - menu_Id
+        - item_Order_Id
+        - block_Name
+        - block_Id
+        - block_Type
+        - menu_Block_Date
+        - location_Id
+        - imageFileName
+        - location_Name
+        - physical_Location_Name
+        - item_Id
+        - item_Type
+        - item_RatingLevel
+        - item_Type_Order_Id
+        - item_Name
+        - item_Name_Line_2
+        - block_Location_Status
+        - block_Order
+        - location_Order
+        - mvS_Visible
+        - description
+        - ingredients
+        - nutritionals
+        - allergens
+        - badges
+        - calories
+        - fat
+        - carbs
+        - whole_Grain
+        - mG_Cholst
+        - mG_Sodm
+        - g_Fiber
+        - mG_Iron
+        - mG_Calcm
+        - iu_Vit_A
+        - mG_Vit_C
+        - g_Protn
+        - g_Carb
+        - g_T_Fat
+        - g_S_Fat
+        - g_Tr_Fat
+        - meat
+        - grain
+        - fruit
+        - contains_Pork
+        - vegetarian
+        - local
+        - organic
+        - egg
+        - milk
+        - soy
+        - wheat
+        - shellfish
+        - peanut
+        - tree_Nuts
+        - fish
+        - price
+    MenuBlock:
+      description: Represents a block of the rotating menu (differs from the Block object schema which is used in the daily menu)
+      type: object
+      properties:
+        id:
+          type: integer
+        object:
+          type: string
+        blockName:
+          example: Lunch
+          type: string
+        scheduledDate:
+          type: string
+        cafeteriaLineList:
+          $ref: "#/components/schemas/CafeteriaLineList"
+        blackedOut:
+          type: boolean
+        noScheduleText:
+          type: string
+          nullable: true
+        orderId:
+          type: integer
+      required:
+        - id
+        - object
+        - blockName
+        - scheduledDate
+        - cafeteriaLineList
+        - blackedOut
+        - noScheduleText
+        - orderId
+    MenuSchedule:
+      type: object
+      properties:
+        dateInformation:
+          type: object
+          properties:
+            dateKey:
+              type: integer
+            dateFull:
+              type: string
+            weekNumber:
+              type: integer
+            weekDayName:
+              type: string
+            monthDay:
+              type: integer
+            monthName:
+              type: string
+            weekDay:
+              type: integer
+            monthNumber:
+              type: integer
+          required:
+            - dateKey
+            - dateFull
+            - weekNumber
+            - weekDayName
+            - monthDay
+            - monthName
+            - weekDay
+            - monthNumber
+        menuBlocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuBlock"
+          required:
+            - object
+            - url
+            - hasMore
+            - data
+      required:
+        - dateInformation
+        - menuBlocks
+    Nutritional:
+      description: Represents data about a single nutrient contained in the list of nutrition data for a given food item
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          example: Saturated Fat (g)
+          type: string
+        oldName:
+          type: string
+          nullable: true
+        cid:
+          type: integer
+        physicalLocationId:
+          type: integer
+        itemId:
+          type: integer
+        value:
+          example: "2.5"
+          type: number
+        rawValue:
+          type: number
+          nullable: true
+        servingSizeId:
+          type: integer
+        isValid:
+          type: boolean
+        nutrientCode:
+          type: integer
+        portionQuantity:
+          example: "1.0"
+          type: number
+        portionUnit:
+          example: 1
+          type: string
+      required:
+        - id
+        - name
+        - oldName
+        - cid
+        - physicalLocationId
+        - itemId
+        - value
+        - rawValue
+        - servingSizeId
+        - isValid
+        - nutrientCode
+        - portionQuantity
+        - portionUnit
+    PhysicalLocation:
+      type: object
+      properties:
+        cid:
+          type: integer
+        name:
+          example: "George Washington Elementary"
+          type: string
+        address:
+          example: 1234 George Washington Circle
+          type: string
+        city:
+          example: Schenectady
+          type: string
+        state:
+          example: New York
+          type: string
+        zip:
+          example: 12345
+          type: string
+        physicalLocationLookup:
+          description: Tokenized tring used in location API request
+          example: GeorgeWashingtonElementary
+          type: string
+        physicalLocationAbbreviation:
+          description: Abbreviation used in location requests to represent a given location, generally appended to school name to make a unique identifier
+          example: NYS
+          type: string
+        schoolPdfSettings:
+          type: object
+          nullable: true
+        id:
+          type: integer
+        object:
+          type: string
+        url:
+          type: string
+        customerName:
+          type: string
+          nullable: true
+        locationIds:
+          type: array
+          items:
+            type: integer
+        locations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              object:
+                type: string
+              cid:
+                type: integer
+              name:
+                type: string
+              updateDate:
+                type: string
+              blockType:
+                type: string
+              orderId:
+                type: integer
+              physicalLocationId:
+                type: integer
+              isVisibleByMVSchool:
+                type: boolean
+            required:
+              - id
+              - object
+              - cid
+              - name
+              - updateDate
+              - blockType
+              - orderId
+              - physicalLocationId
+              - isVisibleByMVSchool
+        createDate:
+          type: string
+        districtLookup:
+          type: string
+          nullable: true
+        long:
+          type: number
+        lat:
+          type: number
+        digitalSuiteEnabled:
+          type: boolean
+          nullable: true
+        setup_complete:
+          type: boolean
+          nullable: true
+        physicalLocationTypes:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              isPrimary:
+                type: boolean
+              physicalLocationId:
+                type: integer
+            required:
+              - id
+              - name
+              - isPrimary
+              - physicalLocationId
+        schoolSettings:
+          type: object
+          properties:
+            id:
+              type: integer
+            object:
+              type: string
+            showLocationHeaders:
+              type: boolean
+            showItemHeaders:
+              type: boolean
+            showAllergens:
+              type: boolean
+            schoolColor:
+              type: string
+            schoolLogo:
+              type: string
+            schoolImage:
+              type: string
+              nullable: true
+            schoolImageDesktop:
+              type: string
+              nullable: true
+            showSevenDayView:
+              type: boolean
+            showDuplicateItems:
+              type: boolean
+            physicalLocationId:
+              type: integer
+            showServingSizeOnHover:
+              type: boolean
+            showServingSizeNextToMenuItem:
+              type: boolean
+          required:
+            - id
+            - object
+            - showLocationHeaders
+            - showItemHeaders
+            - showAllergens
+            - schoolColor
+            - schoolLogo
+            - schoolImage
+            - schoolImageDesktop
+            - showSevenDayView
+            - showDuplicateItems
+            - physicalLocationId
+            - showServingSizeOnHover
+            - showServingSizeNextToMenuItem
+        districtSummerFeedingSettings:
+          type: object
+          nullable: true
+        physicalLocationSummerFeedingSettings:
+          type: object
+          nullable: true
+        dailyMenuId:
+          type: integer
+          nullable: true
+        blackoutInformation:
+          type: object
+          properties:
+            blackoutDates:
+              type: array
+              nullable: true
+              items:
+                type: string
+            blackoutFeedback:
+              type: array
+              nullable: true
+              items:
+                type: string
+          required:
+            - blackoutDates
+            - blackoutFeedback
+        arCampaigns:
+          type: array
+          items: {}
+      required:
+        - cid
+        - name
+        - address
+        - city
+        - state
+        - zip
+        - physicalLocationLookup
+        - physicalLocationAbbreviation
+        - schoolPdfSettings
+        - id
+        - object
+        - url
+        - customerName
+        - locationIds
+        - locations
+        - createDate
+        - districtLookup
+        - long
+        - lat
+        - digitalSuiteEnabled
+        - setup_complete
+        - physicalLocationTypes
+        - schoolSettings
+        - districtSummerFeedingSettings
+        - physicalLocationSummerFeedingSettings
+        - dailyMenuId
+        - blackoutInformation
+        - arCampaigns
+    Price:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        order:
+          type: integer
+      required:
+        - name
+        - price
+        - order
+    MenuResponse:
+      type: object
+      properties:
+        physicalLocation:
+          $ref: "#/components/schemas/PhysicalLocation"
+        announcements:
+          type: array
+          items: {}
+        externalLinks:
+          type: array
+          items: {}
+        menuSchedules:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuSchedule"
+        schoolPriceInfo:
+          type: array
+          items:
+            $ref: "#/components/schemas/Price"
+        dailyMenus:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyMenu"
+        hasDisclaimer:
+          type: boolean
+        features:
+          type: array
+          items:
+            $ref: "#/components/schemas/Feature"
+        physicalLocationNutritionals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Nutritional"
+        physicalLocationAllergens:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allergen"
+        disclaimers:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              content:
+                type: string
+            required:
+              - title
+              - content
+        cards:
+          type: array
+          items: {}
+        menuDataSourceId:
+          type: integer
+      required:
+        - physicalLocation
+        - announcements
+        - externalLinks
+        - menuSchedules
+        - schoolPriceInfo
+        - dailyMenu
+        - dailyMenus
+        - hasDisclaimer
+        - features
+        - physicalLocationNutritionals
+        - physicalLocationAllergens
+        - disclaimers
+        - cards
+        - menuDataSourceId
+    LocationResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhysicalLocation"
