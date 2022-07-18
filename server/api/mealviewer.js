@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURL = "https://api.mealviewer.com/api/v4/school";
+const baseURL = "https://api.mealviewer.com/api/v4";
 const mv = axios.create({
   baseURL: baseURL,
   headers: {

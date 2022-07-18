@@ -1,27 +1,42 @@
-const requestDailyMenuData = async (school) => {
-  if (!school) throw new Error("School name is required.");
-  if (typeof school !== "string")
-    throw new Error("School name must be a valid string.");
+import mv from "../api/mealviewer.js";
+
+const reportError = (err) => {
+  if (err.response) {
+    console.log(err.response.data);
+    console.log(err.response.status);
+    console.log(err.response.headers);
+  } else if (err.request) {
+    console.log(err.request);
+  } else {
+    console.log("Error with request: ", e.nessage);
+  }
+};
+
+const requestDailyMenuData = async ({ school, startDate, endDate }) => {
+  //TODO: Check and utilize user-specified start and end dates instead of defaulting
   const querySchool = school.split(" ").join("");
   const parseDate = (date) => {
     return new Date(date).toLocaleDateString().split("/").join("-");
   };
-  const queryDate = `${parseDate(Date.now())}/${parseDate(Date.now())}`;
-
-  const url = `/${querySchool}/${queryDate}`;
-
-  const { data } = await mv.get(url).catch((e) => {
-    if (e.response) {
-      console.log(e.response.data);
-      console.log(e.response.status);
-      console.log(e.response.headers);
-    } else if (e.request) {
-      console.log(e.request);
-    } else {
-      console.log("Error with request: ", e.nessage);
-    }
+  const queryDates = `${parseDate(Date.now())}/${parseDate(Date.now())}`;
+  const url = `/school/${querySchool}/${queryDates}`;
+  const { data } = await mv.get(url).catch((err) => {
+    reportError(err);
   });
 
+  return data;
+};
+
+const requestLocationData = async ({ location }) => {
+  const url = `/physicalLocation/search/${location}`;
+  const { data } = await mv.get(url).catch((e) => {
+    reportError(err);
+  });
+
+  return data;
+};
+
+const transformDailyMenuData = (data) => {
   let meals = {};
   const extractNutritionData = (foodItemData) => {
     let foodItems = [];
@@ -60,3 +75,5 @@ const requestDailyMenuData = async (school) => {
 
   return meals;
 };
+
+export { requestDailyMenuData, requestLocationData, transformDailyMenuData };

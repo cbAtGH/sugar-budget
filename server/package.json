@@ -1,0 +1,16 @@
+{
+  "name": "sugar-budget",
+  "version": "1.0.0",
+  "description": "A project to track and display public school meal adherence to WHO/AHA/AAP guideliness for added and free sugar consumption",
+  "main": "index.js",
+  "license": "GPL",
+  "type": "module",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "express": "^4.18.1",
+    "redis": "^4.2.0"
+  },
+  "devDependencies": {
+    "vitest": "^0.18.1"
+  }
+}
