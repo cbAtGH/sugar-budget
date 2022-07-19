@@ -1,6 +1,6 @@
 "use strict";
 
-import RedisClient from "@redis/client/dist/lib/client/index.js";
+// import RedisClient from "@redis/client/dist/lib/client/index.js";
 import express from "express";
 
 import {
@@ -42,7 +42,7 @@ app.get("/school/:school/:startDate/:endDate", (req, res) => {
     });
 });
 
-app.get("/physicalLocation/:location", (req, res) => {
+app.get("/location/search/:location", (req, res) => {
   requestLocationData(req.params)
     .then((json) => {
       res.status(200).send(json);

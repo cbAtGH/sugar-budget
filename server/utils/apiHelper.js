@@ -40,13 +40,25 @@ const transformDailyMenuData = (data) => {
   let meals = {};
   const extractNutritionData = (foodItemData) => {
     let foodItems = [];
-    for (const { item_Name, item_Type, nutritionals } of foodItemData) {
+    for (const {
+      item_Name,
+      item_Type,
+      nutritionals,
+      portionQuantity,
+      portionSize,
+    } of foodItemData) {
       let nutritionData = Object.fromEntries(
-        nutritionals.map((n) => [n.name, n.value])
+        nutritionals.reduce((result, { name, rawValue, value }) => {
+          if (rawValue !== null) result.push([name, value]);
+          else result.push([name, null]);
+          return result;
+        }, [])
       );
       foodItems.push({
         item_Name: item_Name,
         item_Type: item_Type,
+        portionQuantity: portionQuantity,
+        portionSize: portionSize,
         nutritionals: nutritionData,
       });
     }
@@ -56,11 +68,10 @@ const transformDailyMenuData = (data) => {
   for (const dailyMenu of data.dailyMenus) {
     let items = extractNutritionData(dailyMenu.items);
     for (const { blockName } of dailyMenu.blocks) {
-      meals[blockName] = [];
-      meals[blockName] = [
-        ...meals[blockName],
-        ...JSON.parse(JSON.stringify(items)),
-      ];
+      meals[blockName] =
+        meals[blockName] == null
+          ? [JSON.parse(JSON.stringify(items))]
+          : [...meals[blockName], ...JSON.parse(JSON.stringify(items))];
     }
   }
 
