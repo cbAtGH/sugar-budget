@@ -29,7 +29,7 @@ const requestDailyMenuData = async ({ school, startDate, endDate }) => {
 
 const requestLocationData = async ({ location }) => {
   const url = `/physicalLocation/search/${location}`;
-  const { data } = await mv.get(url).catch((e) => {
+  const { data } = await mv.get(url).catch((err) => {
     reportError(err);
   });
 
@@ -67,12 +67,10 @@ const transformDailyMenuData = (data) => {
 
   for (const dailyMenu of data.dailyMenus) {
     let items = extractNutritionData(dailyMenu.items);
-    for (const { blockName } of dailyMenu.blocks) {
-      meals[blockName] =
-        meals[blockName] == null
-          ? [JSON.parse(JSON.stringify(items))]
-          : [...meals[blockName], ...JSON.parse(JSON.stringify(items))];
-    }
+    meals.dailyMenu =
+      meals.dailyMenu == null
+        ? [JSON.parse(JSON.stringify(items))]
+        : [...meals.dailyMenu, ...JSON.parse(JSON.stringify(items))];
   }
 
   for (const menuSchedule of data.menuSchedules) {
@@ -80,7 +78,8 @@ const transformDailyMenuData = (data) => {
       let items = extractNutritionData(
         cafeteriaLineList.data[0].foodItemList.data
       );
-      meals[blockName] = [...meals[blockName], ...items];
+      meals[blockName] =
+        meals[blockName] == null ? [items] : [...meals[blockName], ...items];
     }
   }
 
