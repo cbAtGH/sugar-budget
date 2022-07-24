@@ -2,6 +2,7 @@
 
 // import RedisClient from "@redis/client/dist/lib/client/index.js";
 import express from "express";
+import path from "path";
 
 import {
   requestDailyMenuData,
@@ -31,6 +32,8 @@ const set = (key, value) => {
 };
 */
 
+app.use(express.static(path.resolve(__dirname, "../client/build")));
+
 app.get("/school/:school/:startDate/:endDate", (req, res) => {
   requestDailyMenuData(req.params)
     .then((json) => {
@@ -51,6 +54,10 @@ app.get("/location/search/:location", (req, res) => {
       console.log(e);
       res.status(400).send(e);
     });
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
 });
 
 app.listen(PORT, () => console.log(`Server up and running on ${PORT}`));
