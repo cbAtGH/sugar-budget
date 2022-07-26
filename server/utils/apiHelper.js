@@ -39,7 +39,7 @@ const requestLocationData = async ({ location }) => {
 };
 
 const transformDailyMenuData = (data) => {
-  let meals = {};
+  let meals = { dailyMenu: [], scheduledMeals: [] };
   const unitRgx = /([^)]+)\s\(([^)]+)\)/;
   const extractNutritionData = (foodItemData) => {
     let foodItems = [];
@@ -75,20 +75,22 @@ const transformDailyMenuData = (data) => {
 
   for (const dailyMenu of data.dailyMenus) {
     let items = extractNutritionData(dailyMenu.items);
-    meals.dailyMenu =
-      meals.dailyMenu == null
-        ? [JSON.parse(JSON.stringify(items))]
-        : [...meals.dailyMenu, ...JSON.parse(JSON.stringify(items))];
+    meals.dailyMenu = [
+      ...meals.dailyMenu,
+      ...JSON.parse(JSON.stringify(items)),
+    ];
   }
 
   for (const menuSchedule of data.menuSchedules) {
+    let schedule = { date: menuSchedule.dateInformation, meals: [] };
     for (const { blockName, cafeteriaLineList } of menuSchedule.menuBlocks) {
       let items = extractNutritionData(
         cafeteriaLineList.data[0].foodItemList.data
       );
-      meals[blockName] =
-        meals[blockName] == null ? [items] : [...meals[blockName], ...items];
+      const meal = { [blockName]: items };
+      schedule.meals.push(meal);
     }
+    meals.scheduledMeals.push(schedule);
   }
 
   return meals;
