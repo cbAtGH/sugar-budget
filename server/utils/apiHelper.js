@@ -40,6 +40,7 @@ const requestLocationData = async ({ location }) => {
 
 const transformDailyMenuData = (data) => {
   let meals = {};
+  const unitRgx = /([^)]+)\s\(([^)]+)\)/;
   const extractNutritionData = (foodItemData) => {
     let foodItems = [];
     for (const {
@@ -51,8 +52,13 @@ const transformDailyMenuData = (data) => {
     } of foodItemData) {
       let nutritionData = Object.fromEntries(
         nutritionals.reduce((result, { name, rawValue, value }) => {
-          if (rawValue !== null) result.push([name, value]);
-          else result.push([name, null]);
+          const match = name.match(unitRgx);
+          if (rawValue !== null)
+            result.push([
+              match ? match[1] : name,
+              { value: value, units: match ? match[2] : null },
+            ]);
+          else result.push([name, { value: null, units: null }]);
           return result;
         }, [])
       );
