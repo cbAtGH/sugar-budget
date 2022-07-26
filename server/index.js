@@ -1,8 +1,7 @@
-"use strict";
-
 // import RedisClient from "@redis/client/dist/lib/client/index.js";
 import express from "express";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import {
   requestDailyMenuData,
@@ -12,6 +11,8 @@ import {
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // TODO: Finish implementing redis
 /*

@@ -18,7 +18,9 @@ const requestDailyMenuData = async ({ school, startDate, endDate }) => {
   const parseDate = (date) => {
     return new Date(date).toLocaleDateString().split("/").join("-");
   };
-  const queryDates = `${parseDate(Date.now())}/${parseDate(Date.now())}`;
+  const start = startDate || parseDate(Date.now());
+  const end = endDate || startDate;
+  const queryDates = `${start}/${end}`;
   const url = `/school/${querySchool}/${queryDates}`;
   const { data } = await mv.get(url).catch((err) => {
     reportError(err);
