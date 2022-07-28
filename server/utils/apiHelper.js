@@ -72,13 +72,12 @@ const transformDailyMenuData = (data) => {
       // Iterating over static menu items that don't change on a daily basis (milk, condiments)
       let nutritionData = Object.fromEntries(
         nutritionals.reduce((result, { name, rawValue, value }) => {
-          const match = name.match(unitRgx);
-          if (rawValue !== null)
-            result.push([
-              match ? match[1] : name,
-              { value: value, units: match ? match[2] : null },
-            ]);
-          else result.push([name, { value: null, units: null }]);
+          let match = name.match(unitRgx);
+          let nValue = rawValue !== null ? value : null;
+          result.push([
+            match ? match[1] : name,
+            { value: nValue, units: match ? match[2] : null },
+          ]);
           return result;
         }, [])
       );
@@ -108,7 +107,7 @@ const transformDailyMenuData = (data) => {
       let items = extractNutritionData(
         cafeteriaLineList.data[0].foodItemList.data
       );
-      const meal = { [blockName]: items };
+      const meal = { mealBlock: blockName, items: items };
       schedule.meals.push(meal);
     }
     meals.scheduledMeals.push(schedule);

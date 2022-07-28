@@ -9,6 +9,8 @@ import {
   transformDailyMenuData,
 } from "./utils/apiHelper.js";
 
+import { estimateSugars } from "./utils/sugarcalc.js";
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 const __filename = fileURLToPath(import.meta.url);
@@ -38,7 +40,8 @@ app.use(express.static(path.resolve(__dirname, "../client/build")));
 app.get("/school/:school/:startDate/:endDate", (req, res) => {
   requestDailyMenuData(req.params)
     .then((json) => {
-      res.status(200).send(transformDailyMenuData(json));
+      res.status(200).send(estimateSugars(transformDailyMenuData(json)));
+      // res.status(200).send(transformDailyMenuData(json));
     })
     .catch((err) => {
       console.log(err);
