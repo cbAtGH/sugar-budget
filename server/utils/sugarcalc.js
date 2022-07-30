@@ -1,7 +1,5 @@
 const estimateSugars = (menu) => {
-  // const kFRUIT = "FRUIT";
-  // const kMILK = "MILK";
-  let sugarTotals = [];
+  const sugarsData = { location: menu.location, sugarTotals: [] };
   for (const day of menu.scheduledMeals) {
     const dayTotals = [];
     for (const meal of day.meals) {
@@ -16,10 +14,10 @@ const estimateSugars = (menu) => {
             : null,
       });
     }
-    sugarTotals.push({ date: day.date, totals: dayTotals });
+    sugarsData.sugarTotals.push({ date: day.date, totals: dayTotals });
   }
 
-  return sugarTotals;
+  return sugarsData;
 };
 
 export { estimateSugars };

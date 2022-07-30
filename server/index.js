@@ -2,13 +2,11 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-
 import {
   requestDailyMenuData,
   requestLocationData,
   transformDailyMenuData,
 } from "./utils/apiHelper.js";
-
 import { estimateSugars } from "./utils/sugarcalc.js";
 
 const app = express();

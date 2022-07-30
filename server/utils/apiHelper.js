@@ -1,7 +1,44 @@
 import mv from "../api/mealviewer.js";
 
 /**
- * Helper function to log errors
+ * Helper function to organize nutritional data into more consumable format
+ * @param {object} foodItemData - JSON data from a menu object
+ * @returns Array containing the nutritional data for each
+ */
+const extractNutritionData = (foodItemData) => {
+  const unitRgx = /([^)]+)\s\(([^)]+)\)/;
+  let foodItems = [];
+  for (const {
+    item_Name,
+    item_Type,
+    nutritionals,
+    portionQuantity,
+    portionSize,
+  } of foodItemData) {
+    let nutritionData = Object.fromEntries(
+      nutritionals.reduce((result, { name, rawValue, value }) => {
+        let match = name.match(unitRgx);
+        let nValue = rawValue !== null ? value : null;
+        result.push([
+          match ? match[1] : name,
+          { value: nValue, units: match ? match[2] : null },
+        ]);
+        return result;
+      }, [])
+    );
+    foodItems.push({
+      item_Name: item_Name,
+      item_Type: item_Type,
+      portionQuantity: portionQuantity,
+      portionSize: portionSize,
+      nutritionals: nutritionData,
+    });
+  }
+  return foodItems;
+};
+
+/**
+ * Helper function to log server errors
  * @param {object} err - error object from calling function
  */
 const reportError = (err) => {
@@ -58,40 +95,12 @@ const requestLocationData = async ({ location }) => {
  * @returns {object} JSON payload containing abridged meal data containing only nutrition and date information
  */
 const transformDailyMenuData = (data) => {
-  let meals = { dailyMenu: [], scheduledMeals: [] };
-  const unitRgx = /([^)]+)\s\(([^)]+)\)/;
-  const extractNutritionData = (foodItemData) => {
-    let foodItems = [];
-    for (const {
-      item_Name,
-      item_Type,
-      nutritionals,
-      portionQuantity,
-      portionSize,
-    } of foodItemData) {
-      // Iterating over static menu items that don't change on a daily basis (milk, condiments)
-      let nutritionData = Object.fromEntries(
-        nutritionals.reduce((result, { name, rawValue, value }) => {
-          let match = name.match(unitRgx);
-          let nValue = rawValue !== null ? value : null;
-          result.push([
-            match ? match[1] : name,
-            { value: nValue, units: match ? match[2] : null },
-          ]);
-          return result;
-        }, [])
-      );
-      foodItems.push({
-        item_Name: item_Name,
-        item_Type: item_Type,
-        portionQuantity: portionQuantity,
-        portionSize: portionSize,
-        nutritionals: nutritionData,
-      });
-    }
-    return foodItems;
+  let meals = {
+    location: data.physicalLocation,
+    dailyMenu: [],
+    scheduledMeals: [],
   };
-
+  // Iterating over static menu items that don't change on a daily basis (milk, condiments)
   for (const dailyMenu of data.dailyMenus) {
     let items = extractNutritionData(dailyMenu.items);
     meals.dailyMenu = [
@@ -99,9 +108,8 @@ const transformDailyMenuData = (data) => {
       ...JSON.parse(JSON.stringify(items)),
     ];
   }
-
+  // Iterating over rotating menu items that change on a daily basis
   for (const menuSchedule of data.menuSchedules) {
-    // Iterating over rotating menu items that change on a daily basis
     let schedule = { date: menuSchedule.dateInformation, meals: [] };
     for (const { blockName, cafeteriaLineList } of menuSchedule.menuBlocks) {
       let items = extractNutritionData(
