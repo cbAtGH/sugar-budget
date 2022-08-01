@@ -11,6 +11,7 @@ import { estimateSugars } from "./utils/sugarcalc.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const env = process.env.NODE_ENV || "dev";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -34,12 +35,29 @@ const set = (key, value) => {
 */
 
 app.use(express.static(path.resolve(__dirname, "../client/build")));
+if (env === "dev") {
+  app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    res.header("Access-Control-Allow-Method", "POST, GET");
+    next();
+  });
+}
 
-app.get("/school/:school/:startDate/:endDate", (req, res) => {
-  requestDailyMenuData(req.params)
+/**
+ * Expected query parameters
+ * school - school name
+ * startDate - beginning of range for which to retrieve menu data (MM/DD/YY)
+ * endDate - end of range for which to retrieve menu data (MM/DD/YY)
+ */
+
+app.get("/school", (req, res) => {
+  requestDailyMenuData(req.query)
     .then((json) => {
       res.status(200).send(estimateSugars(transformDailyMenuData(json)));
-      // res.status(200).send(transformDailyMenuData(json));
     })
     .catch((err) => {
       console.log(err);
@@ -47,8 +65,8 @@ app.get("/school/:school/:startDate/:endDate", (req, res) => {
     });
 });
 
-app.get("/location/search/:location", (req, res) => {
-  requestLocationData(req.params)
+app.get("/location/search", (req, res) => {
+  requestLocationData(req.query)
     .then((json) => {
       res.status(200).send(json);
     })
