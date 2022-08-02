@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A project to track and display public school meal adherence to WHO/AHA/AAP guideliness for added and free sugar consumption",
   "main": "index.js",
-  "license": "GPL",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "dependencies": {
     "axios": "^0.27.2",

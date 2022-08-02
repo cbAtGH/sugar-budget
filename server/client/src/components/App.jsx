@@ -1,4 +1,6 @@
 import { React, useState } from "react";
+import { Container } from "semantic-ui-react";
+import LocationList from "./LocationList";
 import SearchBar from "./SearchBar";
 import sugarbudget from "../apis/sugarbudget";
 import "../styles/App.css";
@@ -8,6 +10,17 @@ const App = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [menuData, setMenuData] = useState({});
 
+  const onDateSubmit = async (date) => {
+    const res = await sugarbudget.get("/school", {
+      params: {
+        school: selectedLocation.physicalLocationLookup,
+        startDate: date.start,
+        endDate: date.end,
+      },
+    });
+    setMenuData(res.data);
+  };
+
   const onTermSubmit = async (term) => {
     const res = await sugarbudget.get("/location/search", {
       params: { location: term },
@@ -15,14 +28,15 @@ const App = () => {
     setLocations(res.data.data);
   };
 
-  const onLocationSelct = (location) => {
+  const onLocationSelect = (location) => {
     setSelectedLocation(location);
   };
 
   return (
-    <div>
+    <Container>
       <SearchBar onTermSubmit={onTermSubmit} />
-    </div>
+      <LocationList locations={locations} onLocationSelect={onLocationSelect} />
+    </Container>
   );
 };
 
