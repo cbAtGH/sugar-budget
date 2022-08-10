@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "chart.js": "^3.9.1",
+    "chartjs-adapter-luxon": "^1.2.0",
     "chroma-js": "^2.4.2",
+    "luxon": "^3.0.1",
     "react": "^18.2.0",
+    "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.2.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.1.3",

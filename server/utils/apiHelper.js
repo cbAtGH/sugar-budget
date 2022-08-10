@@ -59,7 +59,7 @@ const reportError = (err) => {
  * @returns {object} JSON payload containing all of the date and meal information for the requested period
  */
 const requestDailyMenuData = async ({ school, startDate, endDate }) => {
-  const querySchool = school.split(" ").join("");
+  // const querySchool = school.split(" ").join("");
   const parseDate = (date) => {
     return new Date(date).toLocaleDateString().split("/").join("-");
   };
@@ -67,7 +67,7 @@ const requestDailyMenuData = async ({ school, startDate, endDate }) => {
   const end = endDate || startDate;
   if (end < start) [start, end] = [end, start]; // Swap dates under the assumption that end date was unintentionally before start date
   const queryDates = `${start}/${end}`;
-  const url = `/school/${querySchool}/${queryDates}`;
+  const url = `/school/${school}/${queryDates}`;
   const { data } = await mv.get(url).catch((err) => {
     reportError(err);
   });

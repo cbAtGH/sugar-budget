@@ -4,7 +4,9 @@ const estimateSugars = (menu) => {
     const dayTotals = [];
     for (const meal of day.meals) {
       const mealMap = meal.items
-        .map((m) => m.nutritionals.Sugars.value)
+        .map((m) =>
+          "Sugars" in m.nutritionals ? m.nutritionals.Sugars.value : 0
+        )
         .filter((v) => v != null);
       dayTotals.push({
         mealBlock: meal.mealBlock,
