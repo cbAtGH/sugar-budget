@@ -20,19 +20,17 @@ const MenuItemList = ({ period, data }) => {
             />
           );
         });
-  return (
+  return renderedList.length > 0 ? (
     <Card.Group itemsPerRow={4} textAlign="center" stackable>
-      {renderedList.length ? (
-        renderedList
-      ) : (
-        <Segment placeholder>
-          <Header icon>
-            <Icon name="question circle outline" />
-            No nutritional data provided
-          </Header>
-        </Segment>
-      )}
+      {renderedList}
     </Card.Group>
+  ) : (
+    <Segment placeholder>
+      <Header icon>
+        <Icon name="question circle outline" />
+        No nutritional data provided
+      </Header>
+    </Segment>
   );
 };
 

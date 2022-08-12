@@ -1,4 +1,5 @@
 const estimateSugars = (menu) => {
+  // TODO: Capture values for milk, intrinsic and free sugars. Current assumption is milk doesn't count and is ignored.
   const sugarsData = { location: menu.location, sugarTotals: [] };
   for (const day of menu.scheduledMeals) {
     const dayTotals = [];

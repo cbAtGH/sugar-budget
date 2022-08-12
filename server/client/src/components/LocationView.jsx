@@ -47,8 +47,8 @@ const LocationView = ({ location }) => {
   };
 
   useEffect(() => {
-    const dt = DateTime.fromObject({ year: 2022, month: 4, day: 12 });
-    // const dt = DateTime.now().startOf("day");
+    // const dt = DateTime.fromObject({ year: 2022, month: 4, day: 12 });
+    const dt = DateTime.now().startOf("day");
     getMenuHelper(dt, "day");
   }, []);
 

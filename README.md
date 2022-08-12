@@ -21,3 +21,14 @@ https://api.mealviewer.com/api/v4/school/AllCity-JaneAddamsElementary/08-31-2021
 https://api.mealviewer.com/api/v4/school/LincolnHighSchoolSF/08-31-2021/08-31-2021
 
 Unofficial API documentation and sample requests/responses viewable at https://app.swaggerhub.com/apis-docs/hawkess/mealviewer/1.0.0.
+
+To set up the server and client environment, install the latest version of NodeJS (16.16.0 LTS currently). Run `npm install ---global yarn`.
+Optionally verify Yarn is installed with `yarn --version` or navigate to the /server directory and run `yarn install && cd client/ && yarn install`.
+
+### Running the server
+
+From the /server directory, run `NODE_ENV=dev node index.js` to start the server with development flags.
+
+### Running the client
+
+From the /server/client directory, run `vite` and a browser window should automatically open at localhost:3000. If not, you can manually do so.
