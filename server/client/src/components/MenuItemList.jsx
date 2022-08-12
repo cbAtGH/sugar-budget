@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "semantic-ui-react";
+import { Card, Header, Icon, Segment } from "semantic-ui-react";
 import MenuItem from "./MenuItem";
 
 const MenuItemList = ({ period, data }) => {
@@ -11,8 +11,9 @@ const MenuItemList = ({ period, data }) => {
           return (
             <MenuItem
               key={meal.mealBlock}
-              radius={20}
-              stroke={8}
+              size={150}
+              indicatorWidth={20}
+              trackWidth={20}
               progress={meal.total != null ? meal.total / 7 : 0}
               total={meal.total}
               mealBlock={meal.mealBlock}
@@ -21,7 +22,16 @@ const MenuItemList = ({ period, data }) => {
         });
   return (
     <Card.Group itemsPerRow={4} textAlign="center" stackable>
-      {renderedList}
+      {renderedList.length ? (
+        renderedList
+      ) : (
+        <Segment placeholder>
+          <Header icon>
+            <Icon name="question circle outline" />
+            No nutritional data provided
+          </Header>
+        </Segment>
+      )}
     </Card.Group>
   );
 };

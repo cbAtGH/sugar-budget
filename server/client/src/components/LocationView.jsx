@@ -26,7 +26,7 @@ const LocationView = ({ location }) => {
   };
 
   const getMenuForDate = async (date, period) => {
-    setLoading = true;
+    //setLoading = true;
     const res = await sugarbudget.get("/school", {
       params: {
         school: location.physicalLocationLookup,
@@ -35,7 +35,7 @@ const LocationView = ({ location }) => {
       },
     });
     setMenuData({ ...menuData, [period]: res.data });
-    setLoading = false;
+    //setLoading = false;
   };
 
   const handleChange = (e, data) => {
@@ -47,8 +47,8 @@ const LocationView = ({ location }) => {
   };
 
   useEffect(() => {
-    // const dt = DateTime.fromObject({ year: 2022, month: 4, day: 12 });
-    const dt = DateTime.now().startOf("day");
+    const dt = DateTime.fromObject({ year: 2022, month: 4, day: 12 });
+    // const dt = DateTime.now().startOf("day");
     getMenuHelper(dt, "day");
   }, []);
 

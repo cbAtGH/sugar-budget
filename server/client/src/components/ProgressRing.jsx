@@ -1,25 +1,55 @@
 import React from "react";
 import chroma from "chroma-js";
+import "../styles/ProgressRing.css";
 
-const ProgressRing = ({ radius, stroke, progress }) => {
-  const normalizedRadius = radius - stroke * 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashOffset = circumference - progress * circumference;
-  const f = chroma.scale(["3D9179", "F3B82D", "F5533E"]);
-  const strokeColor = f(progress?.toString());
+const ProgressRing = (props) => {
+  let {
+    size = 150,
+    progress = 0,
+    trackWidth = 10,
+    trackColor = `#ddd`,
+    indicatorWidth = 10,
+    labelColor = `#333`,
+    total = 0,
+  } = props;
+  progress = progress > 1 ? 1 : progress;
+  const center = size / 2;
+  const radius =
+    center - (trackWidth > indicatorWidth ? trackWidth : indicatorWidth);
+  const dashArray = 2 * Math.PI * radius;
+  const dashOffset = dashArray * ((1 - progress) / 1);
+  const f = chroma.scale(["17bf72", "fff027", "fe3b20"]).mode("lrgb");
+  const indicatorColor = f(progress?.toString());
   return (
-    <svg height={radius * 2} width={radius * 2}>
-      <circle
-        stroke={strokeColor}
-        fill="transparent"
-        strokeWidth={stroke}
-        strokeDasharray={circumference + " " + circumference}
-        style={{ strokeDashOffset }}
-        r={normalizedRadius}
-        cx={radius}
-        cy={radius}
-      />
-    </svg>
+    <div className="progress-container">
+      <div className="progress-wrapper" style={{ width: size, height: size }}>
+        <svg className="progress" style={{ width: size, height: size }}>
+          <circle
+            className="progress-track"
+            cx={center}
+            cy={center}
+            fill="transparent"
+            r={radius}
+            stroke={trackColor}
+            strokeWidth={trackWidth}
+          />
+          <circle
+            className="progress-indicator"
+            cx={center}
+            cy={center}
+            fill="transparent"
+            r={radius}
+            stroke={indicatorColor}
+            strokeWidth={indicatorWidth}
+            strokeDasharray={dashArray}
+            strokeDashoffset={dashOffset}
+          />
+        </svg>
+        <div className="progress-label" style={{ color: labelColor }}>
+          <span className="progress-label__progress">{`${total}g `}</span>
+        </div>
+      </div>
+    </div>
   );
 };
 
