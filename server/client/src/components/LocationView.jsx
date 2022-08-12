@@ -1,7 +1,7 @@
-import { useState, React } from "react";
+import { useEffect, useState, React } from "react";
 import { Container, Header, Tab } from "semantic-ui-react";
 import { DateTime } from "luxon";
-import MenuItem from "./MenuItem";
+import MenuItemList from "./MenuItemList";
 import MenuGraph from "./MenuGraph";
 import sugarbudget from "../apis/sugarbudget";
 
@@ -15,7 +15,18 @@ const LocationView = ({ location }) => {
     year: {},
   });
 
+  const getMenuHelper = (date, period) => {
+    getMenuForDate(
+      {
+        start: date.toFormat("LL-dd-yyyy"),
+        end: date.endOf(period).toFormat("LL-dd-yyyy"),
+      },
+      period
+    );
+  };
+
   const getMenuForDate = async (date, period) => {
+    setLoading = true;
     const res = await sugarbudget.get("/school", {
       params: {
         school: location.physicalLocationLookup,
@@ -24,28 +35,29 @@ const LocationView = ({ location }) => {
       },
     });
     setMenuData({ ...menuData, [period]: res.data });
+    setLoading = false;
   };
 
   const handleChange = (e, data) => {
     const period = periods[data.activeIndex];
     const dt = DateTime.now().startOf(period);
     if (Object.keys(menuData[period]).length === 0) {
-      getMenuForDate(
-        {
-          start: dt.toFormat("LL-dd-yyyy"),
-          end: dt.endOf(period).toFormat("LL-dd-yyyy"),
-        },
-        period
-      );
+      getMenuHelper(dt, period);
     }
   };
+
+  useEffect(() => {
+    // const dt = DateTime.fromObject({ year: 2022, month: 4, day: 12 });
+    const dt = DateTime.now().startOf("day");
+    getMenuHelper(dt, "day");
+  }, []);
 
   const panes = [
     {
       menuItem: "Day",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuItem period="day" data={menuData} />
+          <MenuItemList period="day" data={menuData} />
         </Tab.Pane>
       ),
     },

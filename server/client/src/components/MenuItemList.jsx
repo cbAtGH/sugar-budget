@@ -1,0 +1,29 @@
+import React from "react";
+import { Card } from "semantic-ui-react";
+import MenuItem from "./MenuItem";
+
+const MenuItemList = ({ period, data }) => {
+  console.log("MenuItemList Data: ", data);
+  const renderedList =
+    data == null || Object.keys(data[period]).length === 0
+      ? []
+      : data[period].sugarTotals[0].totals.map((meal) => {
+          return (
+            <MenuItem
+              key={meal.mealBlock}
+              radius={20}
+              stroke={8}
+              progress={meal.total != null ? meal.total / 7 : 0}
+              total={meal.total}
+              mealBlock={meal.mealBlock}
+            />
+          );
+        });
+  return (
+    <Card.Group itemsPerRow={4} textAlign="center" stackable>
+      {renderedList}
+    </Card.Group>
+  );
+};
+
+export default MenuItemList;

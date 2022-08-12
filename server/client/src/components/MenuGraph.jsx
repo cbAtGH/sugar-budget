@@ -38,13 +38,13 @@ const MenuGraph = ({ period, data }) => {
   };
 
   const mappedData =
-    data != null && Object.keys(data[period]).length > 0
-      ? data[period].sugarTotals.map((day) => {
+    data == null || Object.keys(data[period]).length === 0
+      ? []
+      : data[period].sugarTotals.map((day) => {
           const x = day.date.dateFull;
           if (day.totals)
             return { x: x, y: day.totals.reduce((p, c) => p + c.total, 0) };
-        })
-      : [];
+        });
 
   // TODO:  implement logic to separate breakfast and lunch totals out into two arrays for mapping two datasets
   const chartData = {
