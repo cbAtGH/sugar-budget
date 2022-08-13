@@ -14,6 +14,7 @@ const LocationView = ({ location }) => {
     month: {},
     year: {},
   });
+  const [loading, setLoading] = useState(false);
 
   const getMenuHelper = (date, period) => {
     getMenuForDate(
@@ -26,7 +27,7 @@ const LocationView = ({ location }) => {
   };
 
   const getMenuForDate = async (date, period) => {
-    //setLoading = true;
+    setLoading(true);
     const res = await sugarbudget.get("/school", {
       params: {
         school: location.physicalLocationLookup,
@@ -35,7 +36,7 @@ const LocationView = ({ location }) => {
       },
     });
     setMenuData({ ...menuData, [period]: res.data });
-    //setLoading = false;
+    setLoading(false);
   };
 
   const handleChange = (e, data) => {
@@ -57,7 +58,7 @@ const LocationView = ({ location }) => {
       menuItem: "Day",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuItemList period="day" data={menuData} />
+          <MenuItemList period="day" data={menuData} loading={loading} />
         </Tab.Pane>
       ),
     },
@@ -65,7 +66,7 @@ const LocationView = ({ location }) => {
       menuItem: "Week",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuGraph period="week" data={menuData} />
+          <MenuGraph period="week" data={menuData} loading={loading} />
         </Tab.Pane>
       ),
     },
@@ -73,7 +74,7 @@ const LocationView = ({ location }) => {
       menuItem: "Month",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuGraph period="month" data={menuData} />
+          <MenuGraph period="month" data={menuData} loading={loading} />
         </Tab.Pane>
       ),
     },
@@ -81,7 +82,7 @@ const LocationView = ({ location }) => {
       menuItem: "Year",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuGraph period="year" data={menuData} />
+          <MenuGraph period="year" data={menuData} loading={loading} />
         </Tab.Pane>
       ),
     },

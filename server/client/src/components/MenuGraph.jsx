@@ -4,8 +4,9 @@ import "chartjs-adapter-luxon";
 import { Line } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import getChroma from "../utils/chromaColor";
+import { Dimmer, Loader, Segment } from "semantic-ui-react";
 
-const MenuGraph = ({ period, data }) => {
+const MenuGraph = ({ period, data, loading }) => {
   const c = getChroma();
   let width, height, gradient;
   const getGradient = (ctx, chartArea) => {
@@ -91,7 +92,15 @@ const MenuGraph = ({ period, data }) => {
       },
     ],
   };
-  return <Line options={options} data={chartData} />;
+  return loading ? (
+    <Segment placeholder>
+      <Dimmer active inverted>
+        <Loader indeterminate>Attempting to retrieve info</Loader>
+      </Dimmer>
+    </Segment>
+  ) : (
+    <Line options={options} data={chartData} />
+  );
 };
 
 export default MenuGraph;
