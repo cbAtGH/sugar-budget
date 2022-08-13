@@ -24,7 +24,7 @@ const App = () => {
   };
 
   return (
-    <Container>
+    <Container className="search-container">
       <SearchBar onTermSubmit={onTermSubmit} />
       {selectedLocation ? (
         <LocationView location={selectedLocation} />

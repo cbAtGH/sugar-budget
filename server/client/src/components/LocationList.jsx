@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Container, Grid } from "semantic-ui-react";
+import { Card } from "semantic-ui-react";
 import LocationItem from "./LocationItem";
 
 const LocationList = ({ locations, onLocationSelect }) => {
@@ -13,7 +13,7 @@ const LocationList = ({ locations, onLocationSelect }) => {
     );
   });
   return (
-    <Card.Group itemsPerRow={4} textAlign="center" stackable>
+    <Card.Group itemsPerRow={4} stackable={true}>
       {renderedList}
     </Card.Group>
   );

@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+import { Form, Segment } from "semantic-ui-react";
 
 const SearchBar = (props) => {
   const [term, setTerm] = useState("");
@@ -13,19 +14,17 @@ const SearchBar = (props) => {
   };
 
   return (
-    <div className="search-bar ui segment">
-      <form className="ui form" onSubmit={onFormSubmit}>
-        <div className="field">
-          <label>Location</label>
-          <input
-            type="text"
-            placeholder="Enter a city/state/school name"
-            value={term}
-            onChange={onInputChange}
-          />
-        </div>
-      </form>
-    </div>
+    <Segment>
+      <Form onSubmit={onFormSubmit}>
+        <Form.Input
+          label="Location"
+          type="text"
+          placeholder="Enter a city/state/school name"
+          value={term}
+          onChange={onInputChange}
+        />
+      </Form>
+    </Segment>
   );
 };
 
