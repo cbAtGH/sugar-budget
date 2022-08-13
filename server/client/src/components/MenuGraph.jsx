@@ -41,6 +41,9 @@ const MenuGraph = ({ period, data }) => {
     scales: {
       x: {
         type: "time",
+        time: {
+          tooltipFormat: "DD",
+        },
         title: {
           display: true,
           text: "Date",
@@ -57,6 +60,8 @@ const MenuGraph = ({ period, data }) => {
       },
     },
   };
+  const skipped = (ctx, value) =>
+    ctx.p0.parsed.y === 0 || ctx.p1.parsed.y === 0 ? value : undefined;
 
   const mappedData =
     data == null || Object.keys(data[period]).length === 0
@@ -78,6 +83,10 @@ const MenuGraph = ({ period, data }) => {
           const { ctx, chartArea } = chart;
           if (!chartArea) return;
           return getGradient(ctx, chartArea);
+        },
+        segment: {
+          borderColor: (ctx) => skipped(ctx, "rgb(0,0,0,0.05)"),
+          borderDash: (ctx) => skipped(ctx, [6, 6]),
         },
       },
     ],

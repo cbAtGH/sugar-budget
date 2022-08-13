@@ -3,7 +3,6 @@ import { Card, Header, Icon, Segment } from "semantic-ui-react";
 import MenuItem from "./MenuItem";
 
 const MenuItemList = ({ period, data }) => {
-  console.log("MenuItemList Data: ", data);
   const renderedList =
     data == null || Object.keys(data[period]).length === 0
       ? []
