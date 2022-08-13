@@ -1,9 +1,33 @@
 import { React } from "react";
-import { DateTime } from "luxon";
+import "luxon";
+import "chartjs-adapter-luxon";
 import { Line } from "react-chartjs-2";
 import Chart from "chart.js/auto";
+import getChroma from "../utils/chromaColor";
 
 const MenuGraph = ({ period, data }) => {
+  const c = getChroma();
+  let width, height, gradient;
+  const getGradient = (ctx, chartArea) => {
+    const chartWidth = chartArea.right - chartArea.left;
+    const chartHeight = chartArea.bottom - chartArea.top;
+    if (!gradient || width !== chartWidth || height !== chartHeight) {
+      width = chartWidth;
+      height = chartHeight;
+      gradient = ctx.createLinearGradient(
+        0,
+        chartArea.bottom,
+        0,
+        chartArea.top
+      );
+      gradient.addColorStop(0, c(0));
+      gradient.addColorStop(0.5, c(0.5));
+      gradient.addColorStop(1.0, c(1));
+    }
+
+    return gradient;
+  };
+
   const options = {
     responsive: true,
     plugins: {
@@ -13,25 +37,22 @@ const MenuGraph = ({ period, data }) => {
           period.charAt(0).toUpperCase() + period.slice(1)
         }`,
       },
-      scales: {
-        x: {
-          type: "time",
-          time: {
-            displayFormats: {
-              day: "DD",
-            },
-            tooltipFormat: "DD MM YYYY",
-          },
-          title: {
-            display: true,
-            text: "Date",
-          },
+    },
+    scales: {
+      x: {
+        type: "time",
+        title: {
+          display: true,
+          text: "Date",
         },
-        y: {
-          title: {
-            display: true,
-            text: "Sugar (g)",
-          },
+      },
+      y: {
+        type: "linear",
+        beginAtZero: true,
+        min: 0,
+        title: {
+          display: true,
+          text: "Sugar (g)",
         },
       },
     },
@@ -52,8 +73,12 @@ const MenuGraph = ({ period, data }) => {
       {
         label: "",
         data: mappedData, // TODO: change to discrete breakfast/lunch datasets
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: (context) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return;
+          return getGradient(ctx, chartArea);
+        },
       },
     ],
   };

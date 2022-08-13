@@ -1,5 +1,6 @@
 import React from "react";
 import chroma from "chroma-js";
+import getChroma from "../utils/chromaColor";
 import "../styles/ProgressRing.css";
 
 const ProgressRing = (props) => {
@@ -18,8 +19,8 @@ const ProgressRing = (props) => {
     center - (trackWidth > indicatorWidth ? trackWidth : indicatorWidth);
   const dashArray = 2 * Math.PI * radius;
   const dashOffset = dashArray * ((1 - progress) / 1);
-  const f = chroma.scale(["17bf72", "fff027", "fe3b20"]).mode("lrgb");
-  const indicatorColor = f(progress?.toString());
+  const c = getChroma();
+  const indicatorColor = c(progress?.toString());
   return (
     <div className="progress-container">
       <div className="progress-wrapper" style={{ width: size, height: size }}>

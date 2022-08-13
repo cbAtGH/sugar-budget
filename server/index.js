@@ -60,7 +60,7 @@ app.get("/school", (req, res) => {
       res.status(200).send(estimateSugars(transformDailyMenuData(json)));
     })
     .catch((err) => {
-      console.log(err);
+      console.log(JSON.stringify(err));
       res.status(400).send(err);
     });
 });
@@ -70,9 +70,9 @@ app.get("/location/search", (req, res) => {
     .then((json) => {
       res.status(200).send(json);
     })
-    .catch((e) => {
-      console.log(e);
-      res.status(400).send(e);
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
     });
 });
 
