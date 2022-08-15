@@ -57,6 +57,7 @@ if (env === "dev") {
 app.get("/school", (req, res) => {
   requestDailyMenuData(req.query)
     .then((json) => {
+      // res.status(200).send(transformDailyMenuData(json));
       res.status(200).send(estimateSugars(transformDailyMenuData(json)));
     })
     .catch((err) => {

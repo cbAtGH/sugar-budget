@@ -27,8 +27,8 @@ const extractNutritionData = (foodItemData) => {
       }, [])
     );
     foodItems.push({
-      item_Name: item_Name,
-      item_Type: item_Type,
+      itemName: item_Name,
+      itemType: item_Type,
       portionQuantity: portionQuantity,
       portionSize: portionSize,
       nutritionals: nutritionData,
@@ -70,7 +70,6 @@ const requestDailyMenuData = async ({ school, startDate, endDate }) => {
   const url = `/school/${school}/${queryDates}`;
   const { data } = await mv.get(url).catch((err) => {
     reportError(err);
-    return {};
   });
 
   return data;
@@ -85,7 +84,6 @@ const requestLocationData = async ({ location }) => {
   const url = `/physicalLocation/search/${location}`;
   const { data } = await mv.get(url).catch((err) => {
     reportError(err);
-    return {};
   });
 
   return data;

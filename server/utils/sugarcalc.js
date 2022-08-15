@@ -4,11 +4,25 @@ const estimateSugars = (menu) => {
   for (const day of menu.scheduledMeals) {
     const dayTotals = [];
     for (const meal of day.meals) {
+      // Create map of sugar values for each meal item, assuming one entree and one possible side per meal
+      const mealSet = new Set();
       const mealMap = meal.items
-        .map((m) =>
-          "Sugars" in m.nutritionals ? m.nutritionals.Sugars.value : 0
-        )
+        .map((m) => {
+          if (!mealSet.has(m.itemType)) {
+            mealSet.add(m.itemType);
+            if (
+              m.itemType !== "FRUIT" &&
+              m.itemType !== "VEGETABLES" &&
+              m.itemType !== "FRUITS"
+            ) {
+              if ("Sugars" in m.nutritionals)
+                return m.nutritionals.Sugars.value;
+            }
+          }
+          return 0;
+        })
         .filter((v) => v != null);
+      // Aggregate values for sugar value map
       dayTotals.push({
         mealBlock: meal.mealBlock,
         total:
