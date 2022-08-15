@@ -44,6 +44,7 @@ const MenuGraph = ({ data, error, loading, period }) => {
       x: {
         type: "time",
         time: {
+          unit: "day",
           tooltipFormat: "DD",
         },
         title: {
