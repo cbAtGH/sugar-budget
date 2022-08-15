@@ -14,6 +14,7 @@ const LocationView = ({ location }) => {
     month: {},
     year: {},
   });
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const getMenuHelper = (date, period) => {
@@ -28,14 +29,21 @@ const LocationView = ({ location }) => {
 
   const getMenuForDate = async (date, period) => {
     setLoading(true);
-    const res = await sugarbudget.get("/school", {
-      params: {
-        school: location.physicalLocationLookup,
-        startDate: date.start,
-        endDate: date.end,
-      },
-    });
-    setMenuData({ ...menuData, [period]: res.data });
+    const res = await sugarbudget
+      .get("/school", {
+        params: {
+          school: location.physicalLocationLookup,
+          startDate: date.start,
+          endDate: date.end,
+        },
+      })
+      .catch((err) => {
+        if (err.response) setError(true);
+      });
+    if (res?.status === 200) {
+      setMenuData({ ...menuData, [period]: res.data });
+      setError(false);
+    } else setError(true);
     setLoading(false);
   };
 
@@ -48,8 +56,8 @@ const LocationView = ({ location }) => {
   };
 
   useEffect(() => {
-    // const dt = DateTime.fromObject({ year: 2022, month: 4, day: 12 });
-    const dt = DateTime.now().startOf("day");
+    const dt = DateTime.fromObject({ year: 2022, month: 9, day: 12 });
+    // const dt = DateTime.now().startOf("day");
     getMenuHelper(dt, "day");
   }, []);
 
@@ -58,7 +66,12 @@ const LocationView = ({ location }) => {
       menuItem: "Day",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuItemList period="day" data={menuData} loading={loading} />
+          <MenuItemList
+            period="day"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
         </Tab.Pane>
       ),
     },
@@ -66,7 +79,12 @@ const LocationView = ({ location }) => {
       menuItem: "Week",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuGraph period="week" data={menuData} loading={loading} />
+          <MenuGraph
+            period="week"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
         </Tab.Pane>
       ),
     },
@@ -74,7 +92,12 @@ const LocationView = ({ location }) => {
       menuItem: "Month",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuGraph period="month" data={menuData} loading={loading} />
+          <MenuGraph
+            period="month"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
         </Tab.Pane>
       ),
     },
@@ -82,7 +105,12 @@ const LocationView = ({ location }) => {
       menuItem: "Year",
       render: () => (
         <Tab.Pane attached={false}>
-          <MenuGraph period="year" data={menuData} loading={loading} />
+          <MenuGraph
+            period="year"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
         </Tab.Pane>
       ),
     },

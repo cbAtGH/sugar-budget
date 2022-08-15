@@ -26,7 +26,7 @@ const MenuItem = ({
     content = (
       <Segment placeholder>
         <Header icon textAlign="center">
-          <Icon name="question circle outline" />
+          <Icon name="question circle outline" size="small" />
           No nutritional data provided
         </Header>
       </Segment>

@@ -2,11 +2,11 @@ import { React } from "react";
 import "luxon";
 import "chartjs-adapter-luxon";
 import { Line } from "react-chartjs-2";
-import Chart from "chart.js/auto";
+import "chart.js/auto";
 import getChroma from "../utils/chromaColor";
-import { Dimmer, Loader, Segment } from "semantic-ui-react";
+import { Dimmer, Header, Icon, Loader, Segment } from "semantic-ui-react";
 
-const MenuGraph = ({ period, data, loading }) => {
+const MenuGraph = ({ data, error, loading, period }) => {
   const c = getChroma();
   let width, height, gradient;
   const getGradient = (ctx, chartArea) => {
@@ -38,6 +38,7 @@ const MenuGraph = ({ period, data, loading }) => {
           period.charAt(0).toUpperCase() + period.slice(1)
         }`,
       },
+      legend: { display: false },
     },
     scales: {
       x: {
@@ -53,6 +54,7 @@ const MenuGraph = ({ period, data, loading }) => {
       y: {
         type: "linear",
         beginAtZero: true,
+        suggestedMax: 80,
         min: 0,
         title: {
           display: true,
@@ -69,8 +71,16 @@ const MenuGraph = ({ period, data, loading }) => {
       ? []
       : data[period].sugarTotals.map((day) => {
           const x = day.date.dateFull;
-          if (day.totals)
-            return { x: x, y: day.totals.reduce((p, c) => p + c.total, 0) };
+          if (day.totals) {
+            let mealSet = new Set();
+            const y = day.totals.reduce((p, c) => {
+              let mealName = c.mealBlock.split(" ")[0];
+              if (mealSet.has(mealName)) return p;
+              mealSet.add(mealName);
+              return p + c.total;
+            }, 0);
+            return { x: x, y: y };
+          }
         });
 
   // TODO:  implement logic to separate breakfast and lunch totals out into two arrays for mapping two datasets
@@ -92,11 +102,18 @@ const MenuGraph = ({ period, data, loading }) => {
       },
     ],
   };
-  return loading ? (
+  return loading || error ? (
     <Segment placeholder>
-      <Dimmer active inverted>
-        <Loader indeterminate>Attempting to retrieve info</Loader>
-      </Dimmer>
+      {loading ? (
+        <Dimmer active inverted>
+          <Loader indeterminate>Attempting to retrieve info</Loader>
+        </Dimmer>
+      ) : (
+        <Header icon textAlign="center">
+          <Icon name="exclamation triangle" size="small" />
+          Failed to retrieve data, please wait a moment and try again.
+        </Header>
+      )}
     </Segment>
   ) : (
     <Line options={options} data={chartData} />

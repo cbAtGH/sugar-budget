@@ -7,15 +7,27 @@ import sugarbudget from "../apis/sugarbudget";
 import "../styles/App.css";
 
 const App = () => {
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   const onTermSubmit = async (term) => {
+    setLoading(true);
     setSelectedLocation(null);
-    const res = await sugarbudget.get("/location/search", {
-      params: { location: term },
-    });
-    setLocations(res.data.data);
+    const res = await sugarbudget
+      .get("/location/search", {
+        params: { location: term },
+        timeout: 3000,
+      })
+      .catch((err) => {
+        if (err.response) setError(true);
+      });
+    if (res?.status === 200) {
+      setLocations(res.data.data);
+      setError(false);
+    } else setError(true);
+    setLoading(false);
   };
 
   const onLocationSelect = (location) => {
@@ -30,6 +42,8 @@ const App = () => {
         <LocationView location={selectedLocation} />
       ) : (
         <LocationList
+          error={error}
+          loading={loading}
           locations={locations}
           onLocationSelect={onLocationSelect}
         />
