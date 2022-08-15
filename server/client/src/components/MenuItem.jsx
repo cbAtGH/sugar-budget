@@ -22,7 +22,7 @@ const MenuItem = ({
       <Card.Meta>{mealBlock}</Card.Meta>
     </Card.Content>
   );
-  if (total === 0 || total == null) {
+  if (total == null) {
     content = (
       <Segment placeholder>
         <Header icon textAlign="center">

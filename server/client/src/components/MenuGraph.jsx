@@ -22,8 +22,8 @@ const MenuGraph = ({ data, error, loading, period }) => {
         chartArea.top
       );
       gradient.addColorStop(0, c(0));
-      gradient.addColorStop(0.5, c(0.5));
-      gradient.addColorStop(1.0, c(1));
+      gradient.addColorStop(0.2, c(0.5));
+      gradient.addColorStop(0.5, c(1));
     }
 
     return gradient;
@@ -54,7 +54,7 @@ const MenuGraph = ({ data, error, loading, period }) => {
       y: {
         type: "linear",
         beginAtZero: true,
-        suggestedMax: 80,
+        suggestedMax: 50,
         min: 0,
         title: {
           display: true,

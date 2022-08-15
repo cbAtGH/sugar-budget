@@ -1,8 +1,8 @@
 import React from "react";
-import { Card, Header, Icon, Segment } from "semantic-ui-react";
+import { Card, Dimmer, Header, Icon, Loader, Segment } from "semantic-ui-react";
 import MenuItem from "./MenuItem";
 
-const MenuItemList = ({ period, data }) => {
+const MenuItemList = ({ period, data, loading, error }) => {
   const renderedList =
     data == null || Object.keys(data[period]).length === 0
       ? []
@@ -19,18 +19,39 @@ const MenuItemList = ({ period, data }) => {
             />
           );
         });
-  return renderedList.length > 0 ? (
-    <Card.Group itemsPerRow={4} textAlign="center" stackable>
-      {renderedList}
-    </Card.Group>
-  ) : (
-    <Segment placeholder>
-      <Header icon>
-        <Icon name="question circle outline" />
-        No nutritional data provided
-      </Header>
-    </Segment>
-  );
+  let renderContent;
+  if (loading || error) {
+    renderContent = (
+      <Segment placeholder>
+        {loading ? (
+          <Dimmer active inverted>
+            <Loader indeterminate>Attempting to retrieve info</Loader>
+          </Dimmer>
+        ) : (
+          <Header icon textAlign="center">
+            <Icon name="exclamation triangle" size="small" />
+            Failed to retrieve data, please wait a moment and try again.
+          </Header>
+        )}
+      </Segment>
+    );
+  } else if (renderedList.length > 0) {
+    renderContent = (
+      <Card.Group itemsPerRow={4} textAlign="center" stackable>
+        {renderedList}
+      </Card.Group>
+    );
+  } else {
+    renderContent = (
+      <Segment placeholder>
+        <Header icon>
+          <Icon name="question circle outline" />
+          No nutritional data provided
+        </Header>
+      </Segment>
+    );
+  }
+  return renderContent;
 };
 
 export default MenuItemList;
