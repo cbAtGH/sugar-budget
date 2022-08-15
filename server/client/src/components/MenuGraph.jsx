@@ -79,7 +79,7 @@ const MenuGraph = ({ data, error, loading, period }) => {
               if (mealSet.has(mealName)) return p;
               mealSet.add(mealName);
               return p + c.total;
-            }, 0);
+            }, null);
             return { x: x, y: y };
           }
         });
