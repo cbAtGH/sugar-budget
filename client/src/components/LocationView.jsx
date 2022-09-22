@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import MenuItemList from "./MenuItemList";
 import MenuGraph from "./MenuGraph";
 import sugarbudget from "../apis/sugarbudget";
+import ReportModal from "./ReportModal";
 
 const periods = ["day", "week", "month", "year"];
 
@@ -56,8 +57,8 @@ const LocationView = ({ location }) => {
   };
 
   useEffect(() => {
-    const dt = DateTime.fromObject({ year: 2022, month: 9, day: 12 });
-    // const dt = DateTime.now().startOf("day");
+    // const dt = DateTime.fromObject({ year: 2022, month: 9, day: 12 });
+    const dt = DateTime.now().startOf("day");
     getMenuHelper(dt, "day");
   }, []);
 
@@ -67,6 +68,12 @@ const LocationView = ({ location }) => {
       render: () => (
         <Tab.Pane attached={false}>
           <MenuItemList
+            period="day"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
+          <ReportModal
             period="day"
             data={menuData}
             loading={loading}
@@ -85,6 +92,12 @@ const LocationView = ({ location }) => {
             loading={loading}
             error={error}
           />
+          <ReportModal
+            period="week"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
         </Tab.Pane>
       ),
     },
@@ -98,6 +111,12 @@ const LocationView = ({ location }) => {
             loading={loading}
             error={error}
           />
+          <ReportModal
+            period="month"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
         </Tab.Pane>
       ),
     },
@@ -106,6 +125,12 @@ const LocationView = ({ location }) => {
       render: () => (
         <Tab.Pane attached={false}>
           <MenuGraph
+            period="year"
+            data={menuData}
+            loading={loading}
+            error={error}
+          />
+          <ReportModal
             period="year"
             data={menuData}
             loading={loading}

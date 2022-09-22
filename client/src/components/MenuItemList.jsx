@@ -22,7 +22,7 @@ const MenuItemList = ({ period, data, loading, error }) => {
   let renderContent;
   if (loading || error) {
     renderContent = (
-      <Segment placeholder>
+      <Segment placeholder style={{ marginBottom: 5 }}>
         {loading ? (
           <Dimmer active inverted>
             <Loader indeterminate>Attempting to retrieve info</Loader>
@@ -37,13 +37,18 @@ const MenuItemList = ({ period, data, loading, error }) => {
     );
   } else if (renderedList.length > 0) {
     renderContent = (
-      <Card.Group itemsPerRow={4} textAlign="center" stackable>
+      <Card.Group
+        itemsPerRow={4}
+        textAlign="center"
+        style={{ marginBottom: 5 }}
+        stackable
+      >
         {renderedList}
       </Card.Group>
     );
   } else {
     renderContent = (
-      <Segment placeholder>
+      <Segment placeholder style={{ marginBottom: 5 }}>
         <Header icon>
           <Icon name="question circle outline" />
           No nutritional data provided
