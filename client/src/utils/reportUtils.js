@@ -1,6 +1,3 @@
-const SUGAR_BUDGET_BASELINE = 7;
-const DEVIATION_OFFSET = 3;
-const ACCEPTED_RANGE = SUGAR_BUDGET_BASELINE + DEVIATION_OFFSET;
 class MealString {
   static Breakfast = new MealString("breakfast");
   static Lunch = new MealString("lunch");
@@ -17,6 +14,10 @@ class ReportDatum {
     this.failed = failed;
   }
 }
+
+const SUGAR_BUDGET_BASELINE = 7;
+const MEAL_OFFSET = 3 / Object.keys(MealString).length;
+const ACCEPTED_RANGE = SUGAR_BUDGET_BASELINE + MEAL_OFFSET;
 
 const reportHelper = (data, mealStrings) => {
   const reportData = {};
@@ -38,9 +39,11 @@ const reportHelper = (data, mealStrings) => {
           mealSet.add(meal.meal);
           total = meal ? meal.total : null;
           if (total == null) continue;
-          if (total <= SUGAR_BUDGET_BASELINE) reportData[meal.meal].passed += 1;
-          if (total <= ACCEPTED_RANGE) reportData[meal.meal].borderline += 1;
-          if (total > ACCEPTED_RANGE) reportData[meal.meal].failed += 1;
+          if (total <= SUGAR_BUDGET_BASELINE - MEAL_OFFSET)
+            reportData[meal.meal].passed += 1;
+          else if (total <= ACCEPTED_RANGE)
+            reportData[meal.meal].borderline += 1;
+          else reportData[meal.meal].failed += 1;
         }
       }
     }
